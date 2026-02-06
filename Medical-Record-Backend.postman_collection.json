@@ -1,0 +1,489 @@
+{
+	"info": {
+		"_postman_id": "medical-record-backend-2024",
+		"name": "Medical Record Backend API",
+		"description": "Complete API collection for Medical Record Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/health",
+							"host": ["{{base_url}}"],
+							"path": ["api", "health"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"PATIENT\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@medical.com\",\n  \"password\": \"Admin123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "profile"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Patients",
+			"item": [
+				{
+					"name": "Create Patient (Super Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"{{patient_user_id}}\",\n  \"age\": 30,\n  \"gender\": \"MALE\",\n  \"bloodType\": \"O+\",\n  \"chronicDiseases\": [\"Diabetes\"],\n  \"allergies\": [\"Penicillin\"],\n  \"notes\": \"Patient notes here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/patients",
+							"host": ["{{base_url}}"],
+							"path": ["api", "patients"]
+						}
+					}
+				},
+				{
+					"name": "Get All Patients (Admin/Doctor)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/patients",
+							"host": ["{{base_url}}"],
+							"path": ["api", "patients"]
+						}
+					}
+				},
+				{
+					"name": "Get Patient by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/patients/:patientId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "patients", ":patientId"],
+							"variable": [
+								{
+									"key": "patientId",
+									"value": "{{patient_id}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Patient",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"age\": 31,\n  \"bloodType\": \"A+\",\n  \"allergies\": [\"Penicillin\", \"Aspirin\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/patients/:patientId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "patients", ":patientId"],
+							"variable": [
+								{
+									"key": "patientId",
+									"value": "{{patient_id}}"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Doctors",
+			"item": [
+				{
+					"name": "Create Doctor (Super Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"{{doctor_user_id}}\",\n  \"specialization\": \"Cardiology\",\n  \"licenseNumber\": \"DOC123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/doctors",
+							"host": ["{{base_url}}"],
+							"path": ["api", "doctors"]
+						}
+					}
+				},
+				{
+					"name": "Get All Doctors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/doctors",
+							"host": ["{{base_url}}"],
+							"path": ["api", "doctors"]
+						}
+					}
+				},
+				{
+					"name": "Get Doctor by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/doctors/:doctorId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "doctors", ":doctorId"],
+							"variable": [
+								{
+									"key": "doctorId",
+									"value": "{{doctor_id}}"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Medical Records",
+			"item": [
+				{
+					"name": "Create Medical Record (Doctor)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patientId\": \"{{patient_id}}\",\n  \"diagnosis\": \"Hypertension\",\n  \"prescription\": \"Take medication daily\",\n  \"attachments\": [\"https://example.com/report.pdf\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/medical-records",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medical-records"]
+						}
+					}
+				},
+				{
+					"name": "Get All Medical Records",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/medical-records",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medical-records"]
+						}
+					}
+				},
+				{
+					"name": "Get Medical Records by Patient",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/medical-records/patient/:patientId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medical-records", "patient", ":patientId"],
+							"variable": [
+								{
+									"key": "patientId",
+									"value": "{{patient_id}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Medical Record by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/medical-records/:recordId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medical-records", ":recordId"],
+							"variable": [
+								{
+									"key": "recordId",
+									"value": "{{record_id}}"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Appointments",
+			"item": [
+				{
+					"name": "Create Appointment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patientId\": \"{{patient_id}}\",\n  \"doctorId\": \"{{doctor_id}}\",\n  \"date\": \"2024-12-25T10:00:00Z\",\n  \"status\": \"PENDING\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/appointments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments"]
+						}
+					}
+				},
+				{
+					"name": "Get All Appointments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/appointments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments"]
+						}
+					}
+				},
+				{
+					"name": "Update Appointment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"CONFIRMED\",\n  \"date\": \"2024-12-25T11:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/appointments/:appointmentId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", ":appointmentId"],
+							"variable": [
+								{
+									"key": "appointmentId",
+									"value": "{{appointment_id}}"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "doctor_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "record_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "appointment_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "doctor_user_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
