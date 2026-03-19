@@ -105,7 +105,7 @@
 			"name": "Patients",
 			"item": [
 				{
-					"name": "Create Patient (Super Admin)",
+					"name": "Create Patient (Admin/Doctor/Patient)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -120,7 +120,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"userId\": \"{{patient_user_id}}\",\n  \"age\": 30,\n  \"gender\": \"MALE\",\n  \"bloodType\": \"O+\",\n  \"chronicDiseases\": [\"Diabetes\"],\n  \"allergies\": [\"Penicillin\"],\n  \"notes\": \"Patient notes here\"\n}"
+							"raw": "{\n  \"userId\": \"{{patient_user_id}}\",\n  \"displayId\": \"P-0001\",\n  \"age\": 30,\n  \"gender\": \"MALE\",\n  \"bloodType\": \"O+\",\n  \"chronicDiseases\": [\"Diabetes\"],\n  \"allergies\": [\"Penicillin\"],\n  \"notes\": \"Patient notes here\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/patients",
@@ -291,7 +291,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"patientId\": \"{{patient_id}}\",\n  \"diagnosis\": \"Hypertension\",\n  \"prescription\": \"Take medication daily\",\n  \"attachments\": [\"https://example.com/report.pdf\"]\n}"
+							"raw": "{\n    \"id\": \"P-0001\",\n    \"sex\": \"Male\",\n    \"age\": 54,\n    \"department\": \"Cardiology\",\n    \"admissionDate\": \"2026-03-01\",\n    \"bedNo\": \"C-12\",\n    \"bloodType\": \"A+\",\n    \"allergiesText\": \"Penicillin (rash), Peanuts (anaphylaxis)\",\n    \"previousSurgeries\": \"CABG x3 (2018)\",\n    \"admissionWeight\": \"88 kg\",\n    \"todayWeight\": \"87.2 kg\",\n    \"height\": \"176 cm\",\n    \"bmi\": \"28.1\",\n    \"admissionReason\": \"Chest pain on exertion, shortness of breath\",\n    \"medicalDiagnosis\": \"Ischemic heart disease, stable angina\",\n    \"complications\": \"None documented\",\n    \"conditions\": [\n      \"Hypertension\",\n      \"Hyperlipidemia\",\n      \"Ischemic heart disease\"\n    ],\n    \"medications\": [\n      \"Aspirin 81 mg OD\",\n      \"Atorvastatin 40 mg HS\",\n      \"Bisoprolol 5 mg OD\",\n      \"Isosorbide dinitrate 20 mg TID\"\n    ],\n    \"allergies\": [\n      \"Penicillin\",\n      \"Peanuts\"\n    ],\n    \"respType\": \"Spontaneous\",\n    \"respRhythm\": \"Regular\",\n    \"respRate\": 18,\n    \"respPattern\": \"Eupnea\",\n    \"chestExcursion\": \"Symmetrical\",\n    \"o2Percent\": 28,\n    \"o2Flow\": 2,\n    \"o2Device\": \"Nasal cannula\",\n    \"bronchialHygiene\": \"Cough and deep breathing q2h\",\n    \"o2Sat\": 96,\n    \"abg\": \"PaO2 82 mmHg / pH 7.40 / PaCO2 38 mmHg / HCO3 24\",\n    \"incentiveSpirometer\": \"Used q4h\",\n    \"mdiInhaler\": \"None\",\n    \"breathSounds\": \"Clear bilaterally\",\n    \"cough\": \"Occasional dry cough\",\n    \"chestTube\": \"None\",\n    \"pulseSeries\": [78, 82, 80],\n    \"pulseRate\": 80,\n    \"pulseRhythm\": \"Regular\",\n    \"pulseAmplitude\": \"+2 normal\",\n    \"heartSounds\": \"S1 S2 normal, no murmur\",\n    \"bpSeries\": \"130/80, 128/78, 126/76\",\n    \"map\": \"95 mmHg\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/medical-records",
