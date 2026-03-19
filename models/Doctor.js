@@ -18,6 +18,16 @@ const doctorSchema = new mongoose.Schema({
     unique: true,
     trim: true,
   },
+  yearsOfExperience: {
+    type: Number,
+    required: [true, 'Years of experience is required'],
+    min: [0, 'Experience cannot be negative'],
+  },
+  status: {
+    type: String,
+    enum: ['PENDING', 'APPROVED', 'REJECTED'],
+    default: 'PENDING',
+  },
 }, {
   timestamps: true,
 });
