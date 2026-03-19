@@ -1,7 +1,7 @@
 const Patient = require('../models/Patient');
 const User = require('../models/User');
 
-// Create patient profile (Super Admin only)
+// Create patient profile (Admin/Doctor/Patient)
 exports.createPatient = async (req, res) => {
   try {
     const { userId, age, gender, bloodType, chronicDiseases, allergies, notes } = req.body;

@@ -4,8 +4,8 @@ const patientController = require('../controllers/patientController');
 const authenticate = require('../middleware/auth');
 const authorize = require('../middleware/roles');
 
-// Super Admin can create patient profiles
-router.post('/', authenticate, authorize('SUPER_ADMIN'), patientController.createPatient);
+// Create patient profiles (Admin/Doctor/Patient)
+router.post('/', authenticate, authorize('SUPER_ADMIN', 'DOCTOR', 'PATIENT'), patientController.createPatient);
 
 // Get all patients (Admin/Doctor)
 router.get('/', authenticate, authorize('SUPER_ADMIN', 'DOCTOR'), patientController.getAllPatients);
