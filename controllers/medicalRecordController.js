@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const MedicalRecord = require('../models/MedicalRecord');
 const Patient = require('../models/Patient');
 const Doctor = require('../models/Doctor');
@@ -7,13 +8,10 @@ exports.createMedicalRecord = async (req, res) => {
   try {
     const {
       patientId, // Optional Object ID
-      id: displayId, // New display ID like P-0001
-      sex,
-      age,
+      id: displayIdOrObjectId, // New display ID like P-0001 or Object ID
       department,
       admissionDate,
       bedNo,
-      bloodType,
       allergiesText,
       previousSurgeries,
       admissionWeight,
@@ -23,9 +21,7 @@ exports.createMedicalRecord = async (req, res) => {
       admissionReason,
       medicalDiagnosis,
       complications,
-      conditions,
       medications,
-      allergies,
       respType,
       respRhythm,
       respRate,
@@ -57,8 +53,22 @@ exports.createMedicalRecord = async (req, res) => {
     let patient;
     if (patientId) {
       patient = await Patient.findById(patientId);
-    } else if (displayId) {
-      patient = await Patient.findOne({ displayId });
+    } else if (displayIdOrObjectId) {
+      // Try finding by ObjectId first (could be Patient ID or User ID)
+      if (mongoose.Types.ObjectId.isValid(displayIdOrObjectId)) {
+        // Try as Patient ID
+        patient = await Patient.findById(displayIdOrObjectId);
+        
+        // If not found, try as User ID (linked to a patient)
+        if (!patient) {
+          patient = await Patient.findOne({ userId: displayIdOrObjectId });
+        }
+      }
+      
+      // If still not found (or wasn't an ID), try finding by displayId (e.g., P-0001)
+      if (!patient) {
+        patient = await Patient.findOne({ displayId: displayIdOrObjectId });
+      }
     }
 
     if (!patient) {
@@ -74,13 +84,10 @@ exports.createMedicalRecord = async (req, res) => {
     const medicalRecordData = {
       patientId: patient._id,
       doctorId: doctor._id,
-      displayId,
-      sex,
-      age,
+      displayId: patient.displayId, // Store the record's relation to that display ID
       department,
       admissionDate,
       bedNo,
-      bloodType,
       allergiesText,
       previousSurgeries,
       admissionWeight,
@@ -90,9 +97,7 @@ exports.createMedicalRecord = async (req, res) => {
       admissionReason,
       medicalDiagnosis,
       complications,
-      conditions,
       medications,
-      allergies,
       respType,
       respRhythm,
       respRate,
@@ -119,7 +124,6 @@ exports.createMedicalRecord = async (req, res) => {
     };
 
     const medicalRecord = new MedicalRecord(medicalRecordData);
-
     await medicalRecord.save();
     
     await medicalRecord.populate([
@@ -155,15 +159,14 @@ exports.getMedicalRecords = async (req, res) => {
       }
       query.patientId = patient._id;
     } else if (patientId) {
-      // Admin/Doctor can filter by patientId
       query.patientId = patientId;
     }
 
     const medicalRecords = await MedicalRecord.find(query)
-      .populate('patientId', 'userId')
-      .populate('doctorId', 'userId specialization')
-      .populate('patientId.userId', 'name email')
-      .populate('doctorId.userId', 'name email')
+      .populate([
+        { path: 'patientId', populate: { path: 'userId', select: 'name email role' } },
+        { path: 'doctorId', populate: { path: 'userId', select: 'name email specialization' } }
+      ])
       .sort({ createdAt: -1 });
 
     res.json(medicalRecords);
@@ -182,16 +185,16 @@ exports.getMedicalRecord = async (req, res) => {
     const user = req.user;
 
     const medicalRecord = await MedicalRecord.findById(recordId)
-      .populate('patientId', 'userId')
-      .populate('doctorId', 'userId specialization')
-      .populate('patientId.userId', 'name email')
-      .populate('doctorId.userId', 'name email');
+      .populate([
+        { path: 'patientId', populate: { path: 'userId', select: 'name email role' } },
+        { path: 'doctorId', populate: { path: 'userId', select: 'name email specialization' } }
+      ]);
 
     if (!medicalRecord) {
       return res.status(404).json({ message: 'Medical record not found' });
     }
 
-    // Patient can only see their own records
+    // Permission check
     if (user.role === 'PATIENT') {
       const patient = await Patient.findOne({ userId: user.userId });
       if (!patient || medicalRecord.patientId._id.toString() !== patient._id.toString()) {

@@ -12,12 +12,9 @@ const medicalRecordSchema = new mongoose.Schema({
     required: [true, 'Doctor ID is required'],
   },
   displayId: { type: String, trim: true }, // Corresponding to "id": "P-0001"
-  sex: { type: String, trim: true },
-  age: { type: Number },
   department: { type: String, trim: true },
   admissionDate: { type: Date },
   bedNo: { type: String, trim: true },
-  bloodType: { type: String, trim: true },
   allergiesText: { type: String, trim: true },
   previousSurgeries: { type: String, trim: true },
   admissionWeight: { type: String, trim: true },
@@ -27,9 +24,7 @@ const medicalRecordSchema = new mongoose.Schema({
   admissionReason: { type: String, trim: true },
   medicalDiagnosis: { type: String, trim: true },
   complications: { type: String, trim: true },
-  conditions: [{ type: String, trim: true }],
   medications: [{ type: String, trim: true }],
-  allergies: [{ type: String, trim: true }],
   // Respiratory
   respType: { type: String, trim: true },
   respRhythm: { type: String, trim: true },
