@@ -76,12 +76,14 @@ exports.login = async (req, res) => {
     // Find user and include password
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
+      console.log(`Login failed: User not found with email ${email}`);
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
+      console.log(`Login failed: Password mismatch for user ${email}`);
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
