@@ -5,34 +5,127 @@ const Doctor = require('../models/Doctor');
 // Create medical record (Doctor only)
 exports.createMedicalRecord = async (req, res) => {
   try {
-    const { patientId, diagnosis, prescription, attachments } = req.body;
-    const doctorId = req.user.userId;
+    const {
+      patientId, // Optional Object ID
+      id: displayId, // New display ID like P-0001
+      sex,
+      age,
+      department,
+      admissionDate,
+      bedNo,
+      bloodType,
+      allergiesText,
+      previousSurgeries,
+      admissionWeight,
+      todayWeight,
+      height,
+      bmi,
+      admissionReason,
+      medicalDiagnosis,
+      complications,
+      conditions,
+      medications,
+      allergies,
+      respType,
+      respRhythm,
+      respRate,
+      respPattern,
+      chestExcursion,
+      o2Percent,
+      o2Flow,
+      o2Device,
+      bronchialHygiene,
+      o2Sat,
+      abg,
+      incentiveSpirometer,
+      mdiInhaler,
+      breathSounds,
+      cough,
+      chestTube,
+      pulseSeries,
+      pulseRate,
+      pulseRhythm,
+      pulseAmplitude,
+      heartSounds,
+      bpSeries,
+      map
+    } = req.body;
+    
+    const doctorUserId = req.user.userId;
 
-    // Verify patient exists
-    const patient = await Patient.findById(patientId);
+    // Determine target patient
+    let patient;
+    if (patientId) {
+      patient = await Patient.findById(patientId);
+    } else if (displayId) {
+      patient = await Patient.findOne({ displayId });
+    }
+
     if (!patient) {
       return res.status(404).json({ message: 'Patient not found' });
     }
 
     // Verify doctor profile exists
-    const doctor = await Doctor.findOne({ userId: doctorId });
+    const doctor = await Doctor.findOne({ userId: doctorUserId });
     if (!doctor) {
       return res.status(404).json({ message: 'Doctor profile not found' });
     }
 
-    const medicalRecord = new MedicalRecord({
-      patientId,
+    const medicalRecordData = {
+      patientId: patient._id,
       doctorId: doctor._id,
-      diagnosis,
-      prescription,
-      attachments: attachments || [],
-    });
+      displayId,
+      sex,
+      age,
+      department,
+      admissionDate,
+      bedNo,
+      bloodType,
+      allergiesText,
+      previousSurgeries,
+      admissionWeight,
+      todayWeight,
+      height,
+      bmi,
+      admissionReason,
+      medicalDiagnosis,
+      complications,
+      conditions,
+      medications,
+      allergies,
+      respType,
+      respRhythm,
+      respRate,
+      respPattern,
+      chestExcursion,
+      o2Percent,
+      o2Flow,
+      o2Device,
+      bronchialHygiene,
+      o2Sat,
+      abg,
+      incentiveSpirometer,
+      mdiInhaler,
+      breathSounds,
+      cough,
+      chestTube,
+      pulseSeries,
+      pulseRate,
+      pulseRhythm,
+      pulseAmplitude,
+      heartSounds,
+      bpSeries,
+      map
+    };
+
+    const medicalRecord = new MedicalRecord(medicalRecordData);
 
     await medicalRecord.save();
-    await medicalRecord.populate('patientId', 'userId')
-      .populate('doctorId', 'userId specialization');
-    await medicalRecord.populate('patientId.userId', 'name email')
-      .populate('doctorId.userId', 'name email');
+    
+    await medicalRecord.populate([
+      { path: 'patientId', populate: { path: 'userId', select: 'name email role' } },
+      { path: 'doctorId', populate: { path: 'userId', select: 'name email specialization' } }
+    ]);
 
     res.status(201).json({
       message: 'Medical record created successfully',

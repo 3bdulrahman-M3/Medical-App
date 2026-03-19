@@ -7,6 +7,11 @@ const patientSchema = new mongoose.Schema({
     required: [true, 'User ID is required'],
     unique: true,
   },
+  displayId: {
+    type: String,
+    unique: true,
+    sparse: true, // Allow multiple nulls if not provided initially
+  },
   age: {
     type: Number,
     min: [0, 'Age must be positive'],
