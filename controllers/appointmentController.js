@@ -27,10 +27,12 @@ exports.createAppointment = async (req, res) => {
     });
 
     await appointment.save();
-    await appointment.populate('patientId', 'userId')
-      .populate('doctorId', 'userId specialization');
-    await appointment.populate('patientId.userId', 'name email')
-      .populate('doctorId.userId', 'name email');
+    
+    // Correct way to deep populate a document
+    await appointment.populate([
+      { path: 'patientId', populate: { path: 'userId', select: 'name email role' } },
+      { path: 'doctorId', populate: { path: 'userId', select: 'name email specialization' } }
+    ]);
 
     res.status(201).json({
       message: 'Appointment created successfully',
@@ -66,13 +68,12 @@ exports.getAppointments = async (req, res) => {
       }
       query.doctorId = doctor._id;
     }
-    // Admin can see all
 
     const appointments = await Appointment.find(query)
-      .populate('patientId', 'userId')
-      .populate('doctorId', 'userId specialization')
-      .populate('patientId.userId', 'name email')
-      .populate('doctorId.userId', 'name email')
+      .populate([
+        { path: 'patientId', populate: { path: 'userId', select: 'name email role' } },
+        { path: 'doctorId', populate: { path: 'userId', select: 'name email specialization' } }
+      ])
       .sort({ date: -1 });
 
     res.json(appointments);
@@ -99,10 +100,12 @@ exports.updateAppointment = async (req, res) => {
     if (date) appointment.date = date;
 
     await appointment.save();
-    await appointment.populate('patientId', 'userId')
-      .populate('doctorId', 'userId specialization');
-    await appointment.populate('patientId.userId', 'name email')
-      .populate('doctorId.userId', 'name email');
+    
+    // Correct way to deep populate a document
+    await appointment.populate([
+      { path: 'patientId', populate: { path: 'userId', select: 'name email role' } },
+      { path: 'doctorId', populate: { path: 'userId', select: 'name email specialization' } }
+    ]);
 
     res.json({
       message: 'Appointment updated successfully',
