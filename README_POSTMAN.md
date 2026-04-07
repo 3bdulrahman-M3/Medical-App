@@ -1,6 +1,6 @@
 # 📮 Postman Collection - Medical Record Backend API
 
-**🌐 Production URL:** `https://medical-app-tau-ten.vercel.app`
+**🌐 Production URL:** `https://medical-app-seven-kappa.vercel.app`
 
 ## 📥 كيفية الاستيراد:
 
@@ -13,7 +13,7 @@
 
 بعد الاستيراد، يمكنك تعديل المتغيرات في Collection Variables:
 
-- `base_url`: `https://medical-app-tau-ten.vercel.app` (Vercel Production URL)
+- `base_url`: `https://medical-app-seven-kappa.vercel.app` (Vercel Production URL)
 - `auth_token`: سيتم تعبئته تلقائياً بعد تسجيل الدخول
 - `patient_id`, `doctor_id`, `record_id`, `appointment_id`: أضفها يدوياً بعد إنشاء السجلات
 
@@ -54,7 +54,7 @@
 ## 🚀 خطوات البدء:
 
 1. **السيرفر جاهز على Vercel:**
-   - URL: `https://medical-app-tau-ten.vercel.app`
+   - URL: `https://medical-app-seven-kappa.vercel.app`
    - لا حاجة لتشغيل سيرفر محلي
 
 2. **تسجيل الدخول:**

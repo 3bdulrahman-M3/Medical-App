@@ -1,6 +1,6 @@
 # 📚 API Examples - Medical Record Backend
 
-**Base URL:** `https://medical-app-tau-ten.vercel.app`
+**Base URL:** `https://medical-app-seven-kappa.vercel.app`
 
 ---
 
