@@ -118,3 +118,49 @@ exports.updateAppointment = async (req, res) => {
     });
   }
 };
+
+// Get today's reminders/appointments
+exports.getTodayReminders = async (req, res) => {
+  try {
+    const user = req.user;
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    let query = {
+      date: { $gte: startOfDay, $lte: endOfDay },
+      status: { $in: ['CONFIRMED', 'PENDING'] } // Include pending and confirmed for the reminder endpoint
+    };
+
+    if (user.role === 'PATIENT') {
+      const patient = await Patient.findOne({ userId: user.userId });
+      if (!patient) return res.status(404).json({ message: 'Patient profile not found' });
+      query.patientId = patient._id;
+    } else if (user.role === 'DOCTOR') {
+      const doctor = await Doctor.findOne({ userId: user.userId });
+      if (!doctor) return res.status(404).json({ message: 'Doctor profile not found' });
+      query.doctorId = doctor._id;
+    }
+
+    const appointments = await Appointment.find(query)
+      .populate([
+        { path: 'patientId', populate: { path: 'userId', select: 'name email role' } },
+        { path: 'doctorId', populate: { path: 'userId', select: 'name email specialization' } }
+      ])
+      .sort({ date: 1 });
+
+    res.json({
+      count: appointments.length,
+      message: appointments.length > 0 
+        ? `You have ${appointments.length} appointment(s) today.` 
+        : "You have no appointments today.",
+      appointments
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Error fetching today’s reminders', 
+      error: error.message 
+    });
+  }
+};

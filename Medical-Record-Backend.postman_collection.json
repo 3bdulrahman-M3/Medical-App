@@ -458,6 +458,8 @@
 						}
 					}
 				},
+					}
+				},
 				{
 					"name": "Update Appointment",
 					"request": {
@@ -486,6 +488,23 @@
 									"value": "{{appointment_id}}"
 								}
 							]
+						}
+					}
+				},
+				{
+					"name": "Get Today's Reminders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/appointments/today-reminders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "today-reminders"]
 						}
 					}
 				}

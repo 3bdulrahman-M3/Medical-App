@@ -12,4 +12,7 @@ router.get('/', authenticate, appointmentController.getAppointments);
 // Update appointment
 router.put('/:appointmentId', authenticate, appointmentController.updateAppointment);
 
+// Get today's reminders/notifications
+router.get('/today-reminders', authenticate, appointmentController.getTodayReminders);
+
 module.exports = router;
