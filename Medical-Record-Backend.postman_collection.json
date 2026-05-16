@@ -458,8 +458,6 @@
 						}
 					}
 				},
-					}
-				},
 				{
 					"name": "Update Appointment",
 					"request": {
